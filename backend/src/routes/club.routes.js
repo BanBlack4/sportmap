@@ -1,23 +1,29 @@
+import { Router } from "express";
+
 import {
- getAllClubs,
- getClubById,
- getNearbyClubs,
- getAvailableSports,
- createClub,
- updateClub,
- deleteClub
+  getAllClubs,
+  getClubById,
+  getNearbyClubs,
+  getAvailableSports,
+  createClub,
+  updateClub,
+  deleteClub,
 } from "../controllers/club.controller.js";
 
-router.get("/",getAllClubs);
+const router = Router();
 
-router.get("/nearby",getNearbyClubs);
+router.get("/", getAllClubs);
 
-router.get("/sports",getAvailableSports);
+router.get("/nearby", getNearbyClubs);
 
-router.get("/:id",getClubById);
+router.get("/sports", getAvailableSports);
 
-router.post("/",createClub);
+router.get("/:id", getClubById);
 
-router.put("/:id",updateClub);
+router.post("/", createClub);
 
-router.delete("/:id",deleteClub);
+router.put("/:id", updateClub);
+
+router.delete("/:id", deleteClub);
+
+export default router;
