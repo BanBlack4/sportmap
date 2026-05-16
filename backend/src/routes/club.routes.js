@@ -1,24 +1,23 @@
-import { Router } from "express";
-import * as clubController from "../controllers/club.controller.js";
+import {
+ getAllClubs,
+ getClubById,
+ getNearbyClubs,
+ getAvailableSports,
+ createClub,
+ updateClub,
+ deleteClub
+} from "../controllers/club.controller.js";
 
-const router = Router();
+router.get("/",getAllClubs);
 
-// GET /api/clubs?sport=fútbol&search=olimpia
-router.get("/", clubController.getAllClubs);
+router.get("/nearby",getNearbyClubs);
 
-// GET /api/clubs/nearby?lat=-33.4&lng=-70.6&radius=5&sport=tenis
-router.get("/nearby", clubController.getNearbyClubs);
+router.get("/sports",getAvailableSports);
 
-// GET /api/clubs/:id
-router.get("/:id", clubController.getClubById);
+router.get("/:id",getClubById);
 
-// POST /api/clubs
-router.post("/", clubController.createClub);
+router.post("/",createClub);
 
-// PUT /api/clubs/:id
-router.put("/:id", clubController.updateClub);
+router.put("/:id",updateClub);
 
-// DELETE /api/clubs/:id
-router.delete("/:id", clubController.deleteClub);
-
-export default router;
+router.delete("/:id",deleteClub);

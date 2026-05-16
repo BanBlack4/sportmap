@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { fetchClubs, fetchNearbyClubs } from "../api/clubs.api";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { fetchClubs, fetchNearbyClubs, fetchSports } from "../api/clubs.api";
 import { useGeolocation } from "./useGeolocation";
 
 export function useClubs() {
@@ -12,9 +12,28 @@ export function useClubs() {
 
   // Filters
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [sport, setSport] = useState("");
   const [radius, setRadius] = useState(5);
   const [useNearby, setUseNearby] = useState(true);
+
+  // Available sports from DB
+  const [availableSports, setAvailableSports] = useState([]);
+
+  // Debounce search — only fires query 400ms after the user stops typing
+  const debounceTimer = useRef(null);
+  const handleSearch = useCallback((value) => {
+    setSearch(value);
+    clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => setDebouncedSearch(value), 400);
+  }, []);
+
+  // Load sports list once on mount
+  useEffect(() => {
+    fetchSports()
+      .then(setAvailableSports)
+      .catch(() => {}); // non-critical, sidebar falls back to empty list
+  }, []);
 
   const load = useCallback(async () => {
     if (geoLoading) return;
@@ -28,10 +47,10 @@ export function useClubs() {
           lng: position.lng,
           radius,
           sport,
-          search,
+          search: debouncedSearch,
         });
       } else {
-        data = await fetchClubs({ sport, search });
+        data = await fetchClubs({ sport, search: debouncedSearch });
       }
       setClubs(data);
     } catch (err) {
@@ -39,7 +58,7 @@ export function useClubs() {
     } finally {
       setLoading(false);
     }
-  }, [position, geoLoading, useNearby, radius, sport, search]);
+  }, [position, geoLoading, useNearby, radius, sport, debouncedSearch]);
 
   useEffect(() => {
     load();
@@ -54,13 +73,14 @@ export function useClubs() {
     position,
     // filters
     search,
-    setSearch,
+    setSearch: handleSearch,
     sport,
     setSport,
     radius,
     setRadius,
     useNearby,
     setUseNearby,
+    availableSports,
     reload: load,
   };
 }

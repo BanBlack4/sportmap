@@ -48,3 +48,13 @@ export async function deleteClub(id) {
   const res = await fetch(`${API_URL}/clubs/${id}`, { method: "DELETE" });
   if (!res.ok) throw new Error("Error al eliminar club");
 }
+
+export async function fetchSports() {
+  const res = await fetch(`${API_URL}/clubs/sports`);
+
+  if (!res.ok) {
+    throw new Error("Error al obtener deportes");
+  }
+
+  return res.json();
+}

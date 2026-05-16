@@ -26,6 +26,11 @@ export const getNearbyClubs = async (req, res) => {
   res.json(clubs);
 };
 
+export const getAvailableSports = async (req, res) => {
+  const sports = await clubService.getAvailableSportsService();
+  res.json(sports);
+};
+
 export const createClub = async (req, res) => {
   const club = await clubService.createClubService(req.body);
   res.status(201).json(club);

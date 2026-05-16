@@ -6,7 +6,7 @@ export async function getAllClubsService({ sport, search } = {}) {
     where: {
       ...(sport && { sport }),
       ...(search && {
-        name: { contains: search, mode: "insensitive" },
+        name: { contains: search},
       }),
     },
     orderBy: { createdAt: "desc" },
@@ -22,7 +22,7 @@ export async function getNearbyClubsService(lat, lng, radiusKm = 5, { sport, sea
     where: {
       ...(sport && { sport }),
       ...(search && {
-        name: { contains: search, mode: "insensitive" },
+        name: { contains: search },
       }),
     },
   });
