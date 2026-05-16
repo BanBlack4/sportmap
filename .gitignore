@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+
+# env
+.env
+.env.local
+
+# build
+dist/
+
+# logs
+*.log
+
+# prisma sqlite
+*.db
+*.db-journal
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vite
+.vite/
+
+# coverage
+coverage/
