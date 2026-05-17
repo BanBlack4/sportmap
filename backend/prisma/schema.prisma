@@ -7,18 +7,68 @@ datasource db {
 }
 
 model Club {
-  id          Int      @id @default(autoincrement())
-  name        String
-  sport       String
-  address     String
-  latitude    Float
-  longitude   Float
-  phone       String?
-  email       String?
-  website     String?
-  description String?
-  imageUrl    String?
-  schedule    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            Int      @id @default(autoincrement())
+
+  name          String
+  sport         String
+  description   String?
+
+  address       String
+  latitude      Float
+  longitude     Float
+
+  phone         String?
+  email         String?
+  website       String?
+
+  instagram     String?
+  facebook      String?
+
+  imageUrl      String?
+
+  hasParking    Boolean @default(false)
+  hasShower     Boolean @default(false)
+  hasStore      Boolean @default(false)
+  hasTrainer    Boolean @default(false)
+
+  priceMonthly  Int?
+
+  // NUEVO
+  level         String? // Principiante / Intermedio / Avanzado
+  minAge        Int?
+  maxAge        Int?
+  capacity      Int?
+  currentMembers Int? @default(0)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  scheduleData Schedule?
+}
+model Schedule {
+  id        Int @id @default(autoincrement())
+
+  monday    String?
+  tuesday   String?
+  wednesday String?
+  thursday  String?
+  friday    String?
+  saturday  String?
+  sunday    String?
+
+  clubId Int @unique
+  club   Club @relation(fields:[clubId], references:[id])
+}
+enum Role{
+  USER
+  ADMIN
+}
+model User{
+  id Int @id @default(autoincrement())
+  name String
+  email String @unique
+  password String
+  role Role @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -1,10 +1,18 @@
+import { clubSchema } from "../validators/club.validators.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import * as clubService from "../services/club.service.js";
 
-export const getAllClubs = async (req, res) => {
+export const getAllClubs = asyncHandler(async (req,res)=>{
   const { sport, search } = req.query;
-  const clubs = await clubService.getAllClubsService({ sport, search });
+
+  const clubs =
+    await clubService.getAllClubsService({
+      sport,
+      search
+    });
+
   res.json(clubs);
-};
+});
 
 export const getClubById = async (req, res) => {
   const club = await clubService.getClubByIdService(Number(req.params.id));
@@ -31,17 +39,37 @@ export const getAvailableSports = async (req, res) => {
   res.json(sports);
 };
 
-export const createClub = async (req, res) => {
-  const club = await clubService.createClubService(req.body);
+export const createClub = asyncHandler(async(req,res)=>{
+
+  const validated =
+      clubSchema.parse(req.body);
+
+  const club =
+      await clubService.createClubService(validated);
+
   res.status(201).json(club);
-};
 
-export const updateClub = async (req, res) => {
-  const club = await clubService.updateClubService(Number(req.params.id), req.body);
-  res.json(club);
-};
+});
 
-export const deleteClub = async (req, res) => {
-  await clubService.deleteClubService(Number(req.params.id));
-  res.status(204).send();
-};
+
+export const updateClub = asyncHandler(async(req,res)=>{
+
+   const validated=
+      clubSchema.partial().parse(req.body);
+
+   const club=
+      await clubService.updateClubService(
+        Number(req.params.id),
+        validated
+      );
+
+   res.json(club);
+
+});
+export const deleteClub =
+asyncHandler(async(req,res)=>{
+ await clubService.deleteClubService(
+      Number(req.params.id)
+ );
+ res.status(204).send();
+});

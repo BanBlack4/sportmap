@@ -11,14 +11,24 @@ export async function getAllClubsService({ sport, search } = {}) {
         }
       })
     },
+
+    include: {
+      scheduleData: true
+    },
+
     orderBy: {
       createdAt: "desc"
     }
   });
 }
+
 export async function getClubByIdService(id) {
   return prisma.club.findUnique({
-    where: { id }
+    where: { id },
+
+    include: {
+      scheduleData: true
+    }
   });
 }
 
@@ -36,6 +46,10 @@ export async function getNearbyClubsService(
           contains: search
         }
       })
+    },
+
+    include: {
+      scheduleData: true
     }
   });
 
@@ -52,29 +66,50 @@ export async function getNearbyClubsService(
     .filter((club) => club.distance <= radiusKm)
     .sort((a, b) => a.distance - b.distance);
 }
+
 export async function createClubService(data){
-   return prisma.club.create({data});
+
+   console.log(data);
+
+   const { scheduleData, ...clubData } = data;
+
+   return prisma.club.create({
+      data:{
+         ...clubData,
+
+         scheduleData: scheduleData
+         ? {
+             create:scheduleData
+           }
+         : undefined
+      },
+
+      include:{
+         scheduleData:true
+      }
+   });
+
 }
 
-export async function updateClubService(id,data){
-   return prisma.club.update({
-      where:{id},
-      data
-   });
+export async function updateClubService(id, data) {
+  return prisma.club.update({
+    where: { id },
+    data
+  });
 }
 
-export async function deleteClubService(id){
-   return prisma.club.delete({
-      where:{id}
-   });
+export async function deleteClubService(id) {
+  return prisma.club.delete({
+    where: { id }
+  });
 }
 
 export async function getAvailableSportsService() {
   const result = await prisma.club.findMany({
-    select:{sport:true},
-    distinct:["sport"],
-    orderBy:{sport:"asc"}
+    select: { sport: true },
+    distinct: ["sport"],
+    orderBy: { sport: "asc" }
   });
 
-  return result.map(r=>r.sport);
+  return result.map((r) => r.sport);
 }
